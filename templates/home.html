@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+
+{% block title %}Home - Bookstore{% endblock %}
+
+{% block content %}
+    <div class="hero">
+        <h1>Welcome to Bookstore</h1>
+        <p>Your one-stop shop for all your reading needs.</p>
+        <a href="#featured-books" class="btn">Explore Books</a>
+    </div>
+
+    <section id="featured-books">
+        <h2>Featured Books</h2>
+        <div class="book-list">
+            <div class="book">
+                <img src="https://via.placeholder.com/150" alt="Book 1">
+                <h3>Book Title 1</h3>
+                <p>Author: Author Name</p>
+            </div>
+            <div class="book">
+                <img src="https://via.placeholder.com/150" alt="Book 2">
+                <h3>Book Title 2</h3>
+                <p>Author: Author Name</p>
+            </div>
+            <div class="book">
+                <img src="https://via.placeholder.com/150" alt="Book 3">
+                <h3>Book Title 3</h3>
+                <p>Author: Author Name</p>
+            </div>
+        </div>
+    </section>
+{% endblock %}
