@@ -1,8 +1,10 @@
+# Import necessary libraries for the app
 from flask import Flask, render_template, redirect, url_for, request, flash, session
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_sqlalchemy import SQLAlchemy
 from flask import session
 
+# Initialize the Flask app and configure the database
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///bookstore.db'
 app.config['SECRET_KEY'] = 'your_secret_key'
@@ -26,6 +28,7 @@ class Book(db.Model):
     price = db.Column(db.Float, nullable=False, default=0.0)
     ratings = db.relationship('Rating', backref='book', lazy=True)
 
+    # Function to calculate the average rating of a book
     def average_rating(self):
         if not self.ratings:
             return None
@@ -47,26 +50,29 @@ with app.app_context():
     db.create_all()
 
 # Routes
+# Home page route, displaying featured books (2 books)
 @app.route('/')
 def home():
     featured_books = Book.query.limit(2).all()  # Get only 2 books
     return render_template('home.html', featured_books=featured_books)
 
+# Login route for user authentication
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     if request.method == 'POST':
         email = request.form.get('email')
         password = request.form.get('password')
-        user = User.query.filter_by(email=email).first()
-        if user and check_password_hash(user.password, password):
-            session['user_id'] = user.id
-            session['role'] = user.role
+        user = User.query.filter_by(email=email).first() # Find user by email
+        if user and check_password_hash(user.password, password): # Find user by email
+            session['user_id'] = user.id # Find user by email
+            session['role'] = user.role # Store user role in session
             flash('Login successful!', 'success')
             return redirect(url_for('home'))
         else:
             flash('Invalid email or password.', 'error')
     return render_template('login.html')
 
+# Register route for new user registration
 @app.route('/register', methods=['GET', 'POST'])
 def register():
     if request.method == 'POST':
@@ -98,6 +104,7 @@ def register():
         return redirect(url_for('login'))
     return render_template('register.html')
 
+# Logout route for ending the user's session
 @app.route('/logout')
 def logout():
     session.pop('user_id', None)
@@ -105,6 +112,7 @@ def logout():
     flash('You have been logged out.', 'success')
     return redirect(url_for('home'))
 
+# Route to add a new book (only accessible by admin users)
 @app.route('/add_book', methods=['GET', 'POST'])
 def add_book():
     # Check if the user is an admin
@@ -124,7 +132,7 @@ def add_book():
             flash('Title and Author are required!', 'error')
             return redirect(url_for('add_book'))
 
-        # Create a new book
+        # Create a new book and save it in the database
         new_book = Book(
             title=title,
             author=author,
@@ -138,6 +146,7 @@ def add_book():
         return redirect(url_for('home'))
     return render_template('add_book.html')
 
+# Route to delete a book (only accessible by admin users)
 @app.route('/delete_book/<int:book_id>', methods=['POST'])
 def delete_book(book_id):
     # Check if the user is an admin
@@ -154,6 +163,7 @@ def delete_book(book_id):
     flash('Book deleted successfully!', 'success')
     return redirect(url_for('home'))
 
+# Route to display all books, with optional search functionality
 @app.route('/all_books')
 def all_books():
     search_query = request.args.get('search', '').strip()  # Get the search query
@@ -165,6 +175,7 @@ def all_books():
         books = Book.query.all()
     return render_template('all_books.html', books=books, search_query=search_query)
 
+# Route for users to rate a book
 @app.route('/rate_book/<int:book_id>', methods=['POST'])
 def rate_book(book_id):
     if 'user_id' not in session:
@@ -188,6 +199,7 @@ def rate_book(book_id):
     flash('Thank you for your rating!', 'success')
     return redirect(url_for('all_books'))
 
+# Route to update the price of a book (only accessible by admin users)
 @app.route('/update_price/<int:book_id>', methods=['POST'])
 def update_price(book_id):
     # Check if the user is an admin
@@ -205,35 +217,39 @@ def update_price(book_id):
     flash(f'Price updated to ${new_price:.2f}!', 'success')
     return redirect(url_for('all_books'))
 
+# Route to display details of a specific book
 @app.route('/book/<int:book_id>')
 def book_details(book_id):
     book = Book.query.get_or_404(book_id)
     return render_template('book_details.html', book=book)
 
+# Route to display the shopping cart
 @app.route('/cart')
 def cart():
-    cart_items = session.get('cart', [])
+    cart_items = session.get('cart', [])  # Get the cart from the session
     books = []
     total_price = 0.0
-    for book_id in cart_items:
+    for book_id in cart_items: # Loop through cart items and get book details
         book = Book.query.get(book_id)
         if book:
             books.append(book)
-            total_price += book.price
+            total_price += book.price # Calculate the total price of books in the cart
     return render_template('cart.html', books=books, total_price=total_price)
 
+# Route to add a book to the cart
 @app.route('/add_to_cart/<int:book_id>', methods=['POST'])
 def add_to_cart(book_id):
-    if 'cart' not in session:
+    if 'cart' not in session:  # If no cart exists, create one
         session['cart'] = []
-    session['cart'].append(book_id)
-    session.modified = True
+    session['cart'].append(book_id) # Add the book to the cart
+    session.modified = True # Mark session as modified
     flash('Book added to cart!', 'success')
     return redirect(url_for('book_details', book_id=book_id))
 
+# Route to submit the order (empty the cart)
 @app.route('/submit_order', methods=['POST'])
 def submit_order():
-    session.pop('cart', None)
+    session.pop('cart', None) # Remove cart from session
     flash('Your order has been submitted!', 'success')
     return redirect(url_for('cart'))
 
