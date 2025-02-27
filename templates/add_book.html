@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+
+{% block title %}Add Book - Bookstore{% endblock %}
+
+{% block content %}
+    <div class="form-container">
+        <h2>Add a New Book</h2>
+        <form method="POST" action="{{ url_for('add_book') }}">
+            <input type="text" name="title" placeholder="Title" required>
+            <input type="text" name="author" placeholder="Author" required>
+            <textarea name="description" placeholder="Description"></textarea>
+            <input type="text" name="image_url" placeholder="Image URL">
+            <input type="number" name="price" placeholder="Price" step="0.01" min="0" required>
+            <button type="submit">Add Book</button>
+        </form>
+    </div>
+{% endblock %}

@@ -6,27 +6,28 @@
     <div class="hero">
         <h1>Welcome to Bookstore</h1>
         <p>Your one-stop shop for all your reading needs.</p>
-        <a href="#featured-books" class="btn">Explore Books</a>
+        {% if session.role == 'admin' %}
+            <a href="{{ url_for('add_book') }}" class="btn">Add Book</a>
+        {% endif %}
     </div>
 
     <section id="featured-books">
         <h2>Featured Books</h2>
         <div class="book-list">
-            <div class="book">
-                <img src="https://via.placeholder.com/150" alt="Book 1">
-                <h3>Book Title 1</h3>
-                <p>Author: Author Name</p>
-            </div>
-            <div class="book">
-                <img src="https://via.placeholder.com/150" alt="Book 2">
-                <h3>Book Title 2</h3>
-                <p>Author: Author Name</p>
-            </div>
-            <div class="book">
-                <img src="https://via.placeholder.com/150" alt="Book 3">
-                <h3>Book Title 3</h3>
-                <p>Author: Author Name</p>
-            </div>
+            {% for book in featured_books %}
+                <div class="book">
+                    <img src="{{ book.image_url or 'https://via.placeholder.com/150' }}" alt="{{ book.title }}">
+                    <h3>{{ book.title }}</h3>
+                    <p>Author: {{ book.author }}</p>
+                    <p>{{ book.description }}</p>
+                    <p>Price: ${{ '%.2f' | format(book.price) }}</p>
+                    <!-- Display Average Rating -->
+                    <p>Average Rating: {{ book.average_rating() or 'Not rated yet' }}</p>
+                </div>
+            {% else %}
+                <p>No featured books available.</p>
+            {% endfor %}
         </div>
+        <a href="{{ url_for('all_books') }}" class="btn">View All Books</a>
     </section>
 {% endblock %}

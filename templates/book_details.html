@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+
+{% block title %}{{ book.title }} - Bookstore{% endblock %}
+
+{% block content %}
+    <div class="book-details">
+        <img src="{{ book.image_url or 'https://via.placeholder.com/150' }}" alt="{{ book.title }}">
+        <h2>{{ book.title }}</h2>
+        <p>Author: {{ book.author }}</p>
+        <p>Price: ${{ '%.2f' | format(book.price) }}</p>
+        <p>{{ book.description }}</p>
+        <!-- Add to Cart Button -->
+        <form action="{{ url_for('add_to_cart', book_id=book.id) }}" method="POST">
+            <button type="submit">Add to Cart</button>
+        </form>
+        <a href="{{ url_for('all_books') }}" class="btn">Back to All Books</a>
+    </div>
+{% endblock %}

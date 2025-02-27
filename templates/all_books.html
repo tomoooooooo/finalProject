@@ -1,0 +1,52 @@
+{% extends "base.html" %}
+
+{% block title %}All Books - Bookstore{% endblock %}
+
+{% block content %}
+    <div class="hero">
+        <h1>All Books</h1>
+        <p>Explore our complete collection of books.</p>
+    </div>
+
+    <!-- Search Form -->
+    <form action="{{ url_for('all_books') }}" method="GET" class="search-form">
+        <input type="text" name="search" placeholder="Search by book name" value="{{ search_query }}">
+        <button type="submit">Search</button>
+    </form>
+
+    <section id="all-books">
+        <h2>Book Collection</h2>
+        {% if search_query %}
+            <p>Showing results for: <strong>{{ search_query }}</strong></p>
+        {% endif %}
+        <div class="book-list">
+            {% for book in books %}
+                <div class="book">
+                    <img src="{{ book.image_url or 'https://via.placeholder.com/150' }}" alt="{{ book.title }}">
+                    <a href="{{ url_for('book_details', book_id=book.id) }}"><h3>{{ book.title }}</h3></a>
+                    <p>Author: {{ book.author }}</p>
+                    <p>Price: ${{ '%.2f' | format(book.price) }}</p>
+                    <!-- Display Average Rating -->
+                    <p>Average Rating: {{ book.average_rating() or 'Not rated yet' }}</p>
+                    <!-- Rating Form -->
+                    {% if session.user_id %}
+                        <form action="{{ url_for('rate_book', book_id=book.id) }}" method="POST" class="rating-form">
+                            <select name="rating" required>
+                                <option value="1">1 Star</option>
+                                <option value="2">2 Stars</option>
+                                <option value="3">3 Stars</option>
+                                <option value="4">4 Stars</option>
+                                <option value="5">5 Stars</option>
+                            </select>
+                            <button type="submit">Rate</button>
+                        </form>
+                    {% else %}
+                        <p><a href="{{ url_for('login') }}">Log in</a> to rate this book.</p>
+                    {% endif %}
+                </div>
+            {% else %}
+                <p>No books found.</p>
+            {% endfor %}
+        </div>
+    </section>
+{% endblock %}

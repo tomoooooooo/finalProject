@@ -7,10 +7,14 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
 </head>
 <body>
+    <!-- Navigation Bar -->
     <nav class="navbar">
         <div class="container">
             <a href="{{ url_for('home') }}" class="logo">Bookstore</a>
             <ul class="nav-links">
+                <li><a href="{{ url_for('home') }}">Home</a></li>
+                <li><a href="{{ url_for('all_books') }}">All Books</a></li>
+                <li><a href="{{ url_for('cart') }}">Cart</a></li>
                 {% if session.user_id %}
                     <li><a href="{{ url_for('logout') }}">Logout</a></li>
                 {% else %}
@@ -21,8 +25,10 @@
         </div>
     </nav>
 
+    <!-- Main Content -->
     <main class="main-content">
         <div class="container">
+            <!-- Flash Messages -->
             {% with messages = get_flashed_messages(with_categories=true) %}
                 {% if messages %}
                     <div class="flash-messages">
@@ -33,10 +39,12 @@
                 {% endif %}
             {% endwith %}
 
+            <!-- Page Content -->
             {% block content %}{% endblock %}
         </div>
     </main>
 
+    <!-- Footer -->
     <footer class="footer">
         <div class="container">
             <p>&copy; 2023 Bookstore. All rights reserved.</p>

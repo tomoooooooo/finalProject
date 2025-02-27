@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+
+{% block title %}Your Cart - Bookstore{% endblock %}
+
+{% block content %}
+    <div class="cart">
+        <h1>Your Cart</h1>
+        {% if books %}
+            <div class="book-list">
+                {% for book in books %}
+                    <div class="book">
+                        <img src="{{ book.image_url or 'https://via.placeholder.com/150' }}" alt="{{ book.title }}">
+                        <h3>{{ book.title }}</h3>
+                        <p>Author: {{ book.author }}</p>
+                        <p>Price: ${{ '%.2f' | format(book.price) }}</p>
+                    </div>
+                {% endfor %}
+            </div>
+            <p>Total Price: ${{ '%.2f' | format(total_price) }}</p>
+            <!-- Order Button -->
+            <form action="{{ url_for('submit_order') }}" method="POST" onsubmit="return confirmOrder()">
+                <button type="submit">Order Now</button>
+            </form>
+        {% else %}
+            <p>Your cart is empty.</p>
+        {% endif %}
+        <a href="{{ url_for('all_books') }}" class="btn">Continue Shopping</a>
+    </div>
+
+    <script>
+        function confirmOrder() {
+            alert("Your order has been submitted!");
+            return true;
+        }
+    </script>
+{% endblock %}
