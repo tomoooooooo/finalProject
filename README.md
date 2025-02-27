@@ -57,7 +57,7 @@ Se foloseste Flask-Login pentru gestionarea autentificarii. Doar administratorii
 
 6. Stilizare si Interfata
 
-Fisierele CSS si JS sunt in static/. Aplicatia foloseste un design minimalist pentru claritate.
+Fisierul CSS este in static/. Aplicatia foloseste un design minimalist pentru claritate.
 
 7. Concluzie si Posibile Imbunatatiri
 
